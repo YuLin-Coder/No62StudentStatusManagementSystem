@@ -1,0 +1,124 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "main"
+  },
+  "logoInfo": {
+    "title": "学籍管理",
+    "image": "static/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "系统管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "type": "1",
+      "child": [
+        {
+          "title": "专业管理",
+          "href": "subject/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "班级管理",
+          "href": "clazz/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "学生管理",
+          "href": "student/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "老师管理",
+          "href": "teacher/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "课程管理",
+          "href": "course/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "开课管理",
+          "href": "section/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "用户管理",
+          "href": "user/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "申请审批",
+          "href": "request/audit",
+          "icon": "fa fa-home",
+          "target": "_self"
+        }
+      ]
+    },
+    {
+      "title": "学生管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "type": "3",
+      "child": [
+        {
+          "title": "选课管理",
+          "href": "section/student_section",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "成绩查询",
+          "href": "score/student_score",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "申请管理",
+          "href": "request/list",
+          "icon": "fa fa-home",
+          "target": "_self"
+        }
+      ]
+    },
+    {
+      "title": "老师管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "type": "2",
+      "child": [
+        {
+          "title": "成绩管理",
+          "href": "section/teacher_section",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "学生查询",
+          "href": "student/teacher_student",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "申请审批",
+          "href": "request/audit",
+          "icon": "fa fa-home",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

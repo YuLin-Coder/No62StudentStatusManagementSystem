@@ -1,0 +1,32 @@
+.width_60 {
+    width: 60%;
+    margin-left: 100px;
+    margin-top: 50px;
+}
+
+.width_80 {
+    width: 80%;
+    margin-left: 100px;
+    margin-top: 50px;
+}
+
+.table-list {
+    width: 100%;
+    margin: 10px 0;
+    background-color: #fff;
+    color: #666;
+    border: 1px solid #e0e0e0;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.table-list th {
+    background-color: #f2f2f2;
+}
+
+.table-list td, th {
+    border: 1px solid #e0e0e0;
+    height: 40px;
+    padding: 2px;
+    box-sizing: border-box;
+}

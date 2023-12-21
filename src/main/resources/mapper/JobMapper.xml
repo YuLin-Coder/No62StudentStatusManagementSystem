@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.JobDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Job" id="Job">
+        <id column="id" property="id"/>
+        <result column="comp_name" property="compName"/>
+        <result column="id" property="id"/>
+        <result column="job_date" property="jobDate"/>
+        <result column="remark" property="remark"/>
+        <result column="salary" property="salary"/>
+        <result column="stu_id" property="stuId"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Job">
+        insert into tb_job(
+        comp_name,
+        job_date,
+        remark,
+        salary,
+        stu_id
+        )values(
+        #{compName},
+        #{jobDate},
+        #{remark},
+        #{salary},
+        #{stuId}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Job">
+        select * from tb_job
+        <include refid="JobFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_job
+        <include refid="JobFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Job">
+        select * from tb_job
+        <include refid="JobFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_job
+        <include refid="JobFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_job
+        <include refid="JobUpdateCriteria"/>
+        <include refid="JobFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="JobFindCriteria">
+        <where>
+            <if test="compName != null and compName != ''">and comp_name like concat('%',#{compName},'%')</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="jobDate != null and jobDate != ''">and job_date = #{jobDate}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="salary != null">and salary = #{salary}</if>
+            <if test="stuId != null">and stu_id = #{stuId}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="JobUpdateCriteria">
+        <set>
+            <if test="updateCompName != null and updateCompName != ''">comp_name = #{updateCompName},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateJobDate != null and updateJobDate != ''">job_date = #{updateJobDate},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateSalary != null">salary = #{updateSalary},</if>
+            <if test="updateStuId != null">stu_id = #{updateStuId},</if>
+        </set>
+    </sql>
+</mapper>

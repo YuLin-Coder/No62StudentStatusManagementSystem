@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.SubjectDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Subject" id="Subject">
+        <id column="id" property="id"/>
+        <result column="college" property="college"/>
+        <result column="id" property="id"/>
+        <result column="remark" property="remark"/>
+        <result column="subject_name" property="subjectName"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Subject">
+        insert into tb_subject(
+        college,
+        remark,
+        subject_name
+        )values(
+        #{college},
+        #{remark},
+        #{subjectName}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Subject">
+        select * from tb_subject
+        <include refid="SubjectFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_subject
+        <include refid="SubjectFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Subject">
+        select * from tb_subject
+        <include refid="SubjectFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_subject
+        <include refid="SubjectFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_subject
+        <include refid="SubjectUpdateCriteria"/>
+        <include refid="SubjectFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="SubjectFindCriteria">
+        <where>
+            <if test="college != null and college != ''">and college like concat('%',#{college},'%')</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="subjectName != null and subjectName != ''">and subject_name like concat('%',#{subjectName},'%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="SubjectUpdateCriteria">
+        <set>
+            <if test="updateCollege != null and updateCollege != ''">college = #{updateCollege},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateSubjectName != null and updateSubjectName != ''">subject_name = #{updateSubjectName},</if>
+        </set>
+    </sql>
+</mapper>

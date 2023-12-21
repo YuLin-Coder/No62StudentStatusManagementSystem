@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.UserDao">
+    <!-- 通用restMap -->
+    <resultMap type="com.djj.entity.User" id="User">
+        <id column="id" property="id"/>
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_pwd" property="userPwd"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.User">
+        insert into tb_user(
+        name,
+        remark,
+        user_name,
+        user_pwd
+        )values(
+        #{name},
+        #{remark},
+        #{userName},
+        #{userPwd}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="User">
+        select * from tb_user
+        <include refid="UserFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_user
+        <include refid="UserFindCriteria"/>
+    </select>
+
+    <!-- 明细查询 -->
+    <select id="detail" resultMap="User">
+        select * from tb_user
+        <include refid="UserFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_user
+        <include refid="UserFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_user
+        <include refid="UserUpdateCriteria"/>
+        <include refid="UserFindCriteria"/>
+    </update>
+
+    <!-- 修改的通用片段 -->
+    <sql id="UserFindCriteria">
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="name != null and name != ''">and name like concat('%',#{name},'%')</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="userName != null and userName != ''">and user_name like concat('%',#{userName},'%')</if>
+            <if test="userPwd != null and userPwd != ''">and user_pwd = #{userPwd}</if>
+        </where>
+    </sql>
+
+    <!-- 查询的通用片段 -->
+    <sql id="UserUpdateCriteria">
+        <set>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateName != null and updateName != ''">name = #{updateName},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateUserName != null and updateUserName != ''">user_name = #{updateUserName},</if>
+            <if test="updateUserPwd != null and updateUserPwd != ''">user_pwd = #{updateUserPwd},</if>
+        </set>
+    </sql>
+</mapper>

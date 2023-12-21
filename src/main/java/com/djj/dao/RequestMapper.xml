@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.RequestDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Request" id="Request">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="reason" property="reason"/>
+        <result column="type" property="type"/>
+        <result column="create_date" property="createDate"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="attach" property="attach"/>
+        <result column="status" property="status"/>
+        <result column="result1" property="result1"/>
+        <result column="result2" property="result2"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Request">
+        insert into tb_request(
+        title,reason,type,create_date,stu_id,attach,status
+        )values(
+        #{title},#{reason},#{type},now(),#{stuId},#{attach},#{status}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Request">
+        select * from tb_request
+        <include refid="RequestFindCriteria"/>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_request
+        <include refid="RequestFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Request">
+        select * from tb_request
+        <include refid="RequestFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_request
+        <include refid="RequestFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_request
+        <include refid="RequestUpdateCriteria"/>
+        <include refid="RequestFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="RequestFindCriteria">
+        <where>
+            <if test="title != null and title != ''">and title like concat('%',#{title},'%')</if>
+            <if test="stuId != null">and stu_id = #{stuId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="RequestUpdateCriteria">
+        <set>
+            <if test="updateStatus != null and updateStatus != ''">status = #{updateStatus},</if>
+            <if test="updateResult1 != null and updateResult1 != ''">result1 = #{updateResult1},</if>
+            <if test="updateResult2 != null and updateResult2 != ''">result2 = #{updateResult2},</if>
+        </set>
+    </sql>
+</mapper>

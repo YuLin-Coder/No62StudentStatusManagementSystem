@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.CourseDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Course" id="Course">
+        <id column="id" property="id"/>
+        <result column="course_name" property="courseName"/>
+        <result column="id" property="id"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Course">
+        insert into tb_course(
+        course_name,
+        remark
+        )values(
+        #{courseName},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Course">
+        select * from tb_course
+        <include refid="CourseFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_course
+        <include refid="CourseFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Course">
+        select * from tb_course
+        <include refid="CourseFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_course
+        <include refid="CourseFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_course
+        <include refid="CourseUpdateCriteria"/>
+        <include refid="CourseFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="CourseFindCriteria">
+        <where>
+            <if test="courseName != null and courseName != ''">and course_name like concat('%',#{courseName},'%')</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="CourseUpdateCriteria">
+        <set>
+            <if test="updateCourseName != null and updateCourseName != ''">course_name = #{updateCourseName},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+        </set>
+    </sql>
+</mapper>

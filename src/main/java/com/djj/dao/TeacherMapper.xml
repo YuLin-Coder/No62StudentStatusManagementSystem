@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.TeacherDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Teacher" id="Teacher">
+        <id column="id" property="id"/>
+        <result column="id" property="id"/>
+        <result column="remark" property="remark"/>
+        <result column="teacher_pwd" property="teacherPwd"/>
+        <result column="teacher_name" property="teacherName"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Teacher">
+        insert into tb_teacher(
+        remark,
+        teacher_pwd,
+        teacher_name,
+        name
+        )values(
+        #{remark},
+        #{teacherPwd},
+        #{teacherName},
+        #{name}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Teacher">
+        select * from tb_teacher
+        <include refid="TeacherFindCriteria"/>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_teacher
+        <include refid="TeacherFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Teacher">
+        select * from tb_teacher
+        <include refid="TeacherFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_teacher
+        <include refid="TeacherFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_teacher
+        <include refid="TeacherUpdateCriteria"/>
+        <include refid="TeacherFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="TeacherFindCriteria">
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="teacherPwd != null and teacherPwd != ''">and teacher_pwd = #{teacherPwd}</if>
+            <if test="teacherName != null and teacherName != ''">and teacher_name like concat('%',#{teacherName},'%')
+            </if>
+            <if test="name != null and name != ''">and name like concat('%',#{name},'%')</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="TeacherUpdateCriteria">
+        <set>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateTeacherPwd != null and updateTeacherPwd != ''">teacher_pwd = #{updateTeacherPwd},</if>
+            <if test="updateTeacherName != null and updateTeacherName != ''">teacher_name = #{updateTeacherName},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+        </set>
+    </sql>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.ScoreDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Score" id="Score">
+        <id column="id" property="id"/>
+        <result column="course_id" property="courseId"/>
+        <result column="id" property="id"/>
+        <result column="score" property="score"/>
+        <result column="section_id" property="sectionId"/>
+        <result column="stu_id" property="stuId"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Score">
+        insert into tb_score(
+        course_id,
+        score,
+        section_id,
+        stu_id
+        )values(
+        #{courseId},
+        #{score},
+        #{sectionId},
+        #{stuId}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Score">
+        select * from tb_score
+        <include refid="ScoreFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_score
+        <include refid="ScoreFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Score">
+        select * from tb_score
+        <include refid="ScoreFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_score
+        <include refid="ScoreFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_score
+        <include refid="ScoreUpdateCriteria"/>
+        <include refid="ScoreFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="ScoreFindCriteria">
+        <where>
+            <if test="courseId != null and courseId != ''">and course_id = #{courseId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="score != null">and score = #{score}</if>
+            <if test="sectionId != null">and section_id = #{sectionId}</if>
+            <if test="stuId != null">and stu_id = #{stuId}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="ScoreUpdateCriteria">
+        <set>
+            <if test="updateCourseId != null">course_id = #{updateCourseId},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateScore != null">score = #{updateScore},</if>
+            <if test="updateSectionId != null">section_id = #{updateSectionId},</if>
+            <if test="updateStuId != null">stu_id = #{updateStuId},</if>
+        </set>
+    </sql>
+
+    <!-- 查询各科平均成绩 -->
+    <select id="queryAvgScoreBySection" resultType="hashmap">
+        select year,type,(
+        select clazz_name from tb_clazz where tb_clazz.id = tb_section.clazz_id
+        ) clazzName,(
+        select course_name from tb_course where tb_course.id = tb_section.course_id
+        ) courseName ,avgScore from tb_section,(
+        select section_id,avg(score) avgScore from tb_score group by section_id
+        ) A where tb_section.id = A.section_id
+    </select>
+</mapper>

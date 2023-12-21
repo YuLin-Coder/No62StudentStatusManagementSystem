@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.SectionDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Section" id="Section">
+        <id column="id" property="id"/>
+        <result column="clazz_id" property="clazzId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="id" property="id"/>
+        <result column="remark" property="remark"/>
+        <result column="teacher_id" property="teacherId"/>
+        <result column="type" property="type"/>
+        <result column="year" property="year"/>
+    </resultMap>
+
+    <resultMap id="SelectedSection" type="com.djj.entity.Section" extends="Section">
+        <result property="selected" column="selected"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Section">
+        insert into tb_section(
+        clazz_id,
+        course_id,
+        remark,
+        teacher_id,
+        type,
+        year
+        )values(
+        #{clazzId},
+        #{courseId},
+        #{remark},
+        #{teacherId},
+        #{type},
+        #{year}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Section">
+        select * from tb_section
+        <include refid="SectionFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_section
+        <include refid="SectionFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Section">
+        select * from tb_section
+        <include refid="SectionFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_section
+        <include refid="SectionFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_section
+        <include refid="SectionUpdateCriteria"/>
+        <include refid="SectionFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="SectionFindCriteria">
+        <where>
+            <if test="clazzId != null">and clazz_id = #{clazzId}</if>
+            <if test="courseId != null">and course_id = #{courseId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="teacherId != null">and teacher_id = #{teacherId}</if>
+            <if test="type != null">and type = #{type}</if>
+            <if test="year != null">and year = #{year}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="SectionUpdateCriteria">
+        <set>
+            <if test="updateClazzId != null">clazz_id = #{updateClazzId},</if>
+            <if test="updateCourseId != null">course_id = #{updateCourseId},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateTeacherId != null">teacher_id = #{updateTeacherId},</if>
+            <if test="updateType != null">type = #{updateType},</if>
+            <if test="updateYear != null">year = #{updateYear},</if>
+        </set>
+    </sql>
+
+    <!-- 按照学生查询班级开课 -->
+    <select id="queryByStudent" resultMap="SelectedSection">
+        select tb_section.*,
+        (select count(*) from tb_score where tb_score.stu_id = tb_student.id and tb_score.section_id = tb_section.id)
+        selected
+        from tb_section,tb_student where tb_section.clazz_id = tb_student.clazz_id and tb_student.id = #{studentId}
+    </select>
+
+    <!-- 按照老师查询班级开课 -->
+    <select id="queryByTeacher" resultMap="Section">
+        select tb_section.*
+        from tb_section,tb_teacher where tb_section.teacher_id and tb_teacher.id and tb_teacher.id = #{teacherId}
+    </select>
+
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djj.dao.StudentDao">
+
+    <!-- 通用resultMap -->
+    <resultMap type="com.djj.entity.Student" id="Student">
+        <id column="id" property="id"/>
+        <result column="addr" property="addr"/>
+        <result column="gender" property="gender"/>
+        <result column="birthday" property="birthday"/>
+        <result column="card_no" property="cardNo"/>
+        <result column="clazz_id" property="clazzId"/>
+        <result column="id" property="id"/>
+        <result column="join_date" property="joinDate"/>
+        <result column="phone" property="phone"/>
+        <result column="pname" property="pname"/>
+        <result column="status" property="status"/>
+        <result column="stu_name" property="stuName"/>
+        <result column="stu_no" property="stuNo"/>
+        <result column="stu_pwd" property="stuPwd"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="telephone" property="telephone"/>
+    </resultMap>
+
+    <!-- 插入 返回主键 -->
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.djj.entity.Student">
+        insert into tb_student(
+        addr,
+        gender,
+        birthday,
+        card_no,
+        clazz_id,
+        join_date,
+        phone,
+        pname,
+        status,
+        stu_name,
+        stu_no,
+        stu_pwd,
+        subject_id,
+        telephone
+        )values(
+        #{addr},
+        #{gender},
+        #{birthday},
+        #{cardNo},
+        #{clazzId},
+        #{joinDate},
+        #{phone},
+        #{pname},
+        #{status},
+        #{stuName},
+        #{stuNo},
+        #{stuPwd},
+        #{subjectId},
+        #{telephone}
+        )
+    </insert>
+
+    <!-- 查询所有 -->
+    <select id="query" resultMap="Student">
+        select * from tb_student
+        <include refid="StudentFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+    <!-- 查询总记录条数 -->
+    <select id="count" resultType="int">
+        select count(1) from tb_student
+        <include refid="StudentFindCriteria"/>
+    </select>
+
+    <!-- 明细查询（只返回一条数据） -->
+    <select id="detail" resultMap="Student">
+        select * from tb_student
+        <include refid="StudentFindCriteria"/>
+        limit 1
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from tb_student
+        <include refid="StudentFindCriteria"/>
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update">
+        update tb_student
+        <include refid="StudentUpdateCriteria"/>
+        <include refid="StudentFindCriteria"/>
+    </update>
+
+    <!-- 查询的通用片段 -->
+    <sql id="StudentFindCriteria">
+        <where>
+            <if test="addr != null and addr != ''">and addr = #{addr}</if>
+            <if test="gender != null and gender != ''">and gender = #{gender}</if>
+            <if test="cardNo != null and cardNo != ''">and card_no like concat('%',#{cardNo},'%')</if>
+            <if test="clazzId != null">and clazz_id = #{clazzId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="phone != null and phone != ''">and phone = #{phone}</if>
+            <if test="pname != null and pname != ''">and pname = #{pname}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="stuName != null and stuName != ''">and stu_name like concat('%',#{stuName},'%')</if>
+            <if test="stuNo != null and stuNo != ''">and stu_no like concat('%',#{stuNo},'%')</if>
+            <if test="stuPwd != null and stuPwd != ''">and stu_pwd = #{stuPwd}</if>
+            <if test="subjectId != null">and subject_id = #{subjectId}</if>
+            <if test="telephone != null and telephone != ''">and telephone = #{telephone}</if>
+        </where>
+    </sql>
+
+    <!-- 修改的通用片段 -->
+    <sql id="StudentUpdateCriteria">
+        <set>
+            <if test="updateAddr != null and updateAddr != ''">addr = #{updateAddr},</if>
+            <if test="updateGender != null and updateGender != ''">gender = #{updateGender},</if>
+            <if test="updateBirthday != null and updateBirthday != ''">birthday = #{updateBirthday},</if>
+            <if test="updateCardNo != null and updateCardNo != ''">card_no = #{updateCardNo},</if>
+            <if test="updateClazzId != null and updateClazzId != ''">clazz_id = #{updateClazzId},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateJoinDate != null">join_date = #{updateJoinDate},</if>
+            <if test="updatePhone != null and updatePhone != ''">phone = #{updatePhone},</if>
+            <if test="updatePname != null and updatePname != ''">pname = #{updatePname},</if>
+            <if test="updateStatus != null and updateStatus != ''">status = #{updateStatus},</if>
+            <if test="updateStuName != null and updateStuName != ''">stu_name = #{updateStuName},</if>
+            <if test="updateStuNo != null and updateStuNo != ''">stu_no = #{updateStuNo},</if>
+            <if test="updateStuPwd != null and updateStuPwd != ''">stu_pwd = #{updateStuPwd},</if>
+            <if test="updateSubjectId != null">subject_id = #{updateSubjectId},</if>
+            <if test="updateTelephone != null and updateTelephone != ''">telephone = #{updateTelephone},</if>
+        </set>
+    </sql>
+
+    <!-- 查询选课的学生 -->
+    <select id="querySelectStudent" resultType="hashmap">
+        select tb_student.id,stu_name as stuName,score from tb_score,tb_student
+        where tb_score.stu_id = tb_student.id
+        and course_id = #{courseId} and section_id = #{sectionId}
+    </select>
+
+    <!-- 老师查询学生（三表联查） -->
+    <select id="queryStudentByTeacher" resultMap="Student">
+        select tb_student.* from tb_student,tb_score,tb_section
+        where
+        tb_student.id = tb_score.stu_id
+        and
+        tb_score.section_id = tb_section.id
+        and tb_section.teacher_id = #{teacherId}
+        <if test="clazzId != null">and tb_section.clazz_Id = #{clazzId}</if>
+        <if test="subjectId != null">and subject_Id = #{subjectId}</if>
+    </select>
+
+</mapper>
